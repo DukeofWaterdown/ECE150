@@ -1,4 +1,4 @@
-# ECE150 - Electrical and Computer Engineering One Hundred and Fifty - AKA. Coding for EE 
+# ECE150 - Electrical and Computer Engineering One Hundred and Fifty - AKA. Coding for first year Electrical Engineers 
 
 This is a little collection of all the projects and deliverables I coded during my first year at the wonderful academic institution known as the University of Waterloo!
 
