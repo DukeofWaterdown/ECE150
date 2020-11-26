@@ -293,7 +293,18 @@ void History::update_acb_cgl() {
 // TASK 8
 
 double History::compute_cgl(unsigned int year) {
-	return 0;
+	Transaction * p_traverse = this->get_p_head();
+
+	double OLG {0};
+
+	while (p_traverse != nullptr) {
+		if (p_traverse->get_year() == year) {
+			OLG += p_traverse->get_cgl();
+		}
+		p_traverse = p_traverse->get_next();
+	}
+
+	return OLG;
 }
 
 
