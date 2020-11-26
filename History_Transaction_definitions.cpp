@@ -26,9 +26,29 @@ int main() {
 //
 
 Transaction::Transaction(std::string ticker_symbol, unsigned int day_date, unsigned int month_date, unsigned year_date, bool buy_sell_trans, unsigned int number_shares, double trans_amount) {
+	symbol = ticker_symbol;
+	day = day_date;
+	month = month_date;
+	year = year_date;
+	if (buy_sell_trans == 1) {
+		trans_type = "Buy";
+	}
+	else {
+		trans_type = "Sell";
+	}
+	shares = number_shares;
+	amount = trans_amount;
+	trans_id = assigned_trans_id;
+
+	acb = 0;
+	acb_per_share = 0;
+	share_balance = 0;
+	cgl = 0;
+
+	p_next = nullptr;
+
 	return;
 }
-
 
 // Destructor
 // TASK 1
@@ -39,11 +59,53 @@ Transaction::~Transaction() {
 
 // Overloaded < operator.
 // TASK 2
-//
+// THIS. compare year month day
 bool Transaction::operator<(Transaction const &other) {
+	unsigned int t1_year = this->get_year();
+	unsigned int t1_month = this->get_month();
+	unsigned int t1_day = this->get_day();
+	unsigned int t1_id = this->get_trans_id();
+
+	unsigned int t2_year = other.get_year();
+	unsigned int t2_month = other.get_month();
+	unsigned int t2_day = other.get_day();
+	unsigned int t2_id = other.get_trans_id();
+
+
+	if (t1_year < t2_year) { //General Year Stuff
+		return 1;
+	}
+	if (t1_year > t2_year) {
+		return 0;
+	}
+
+	if (t1_year == t2_year) { //Same Year
+			if (t1_month < t2_month) {
+				return 1;
+			}
+			else if (t1_month > t2_month) {
+				return 0;
+			}
+			else if (t1_month == t2_month) { //Same Month
+				if(t1_day < t2_day) {
+					return 1;
+				}
+				else if (t1_day < t2_day) {
+					return 0;
+				}
+				else if (t1_day == t2_day) { //Same Day
+					if (t1_id < t2_id) {
+						return 1;
+					}
+					else if (t1_id > t2_id) {
+						return 0;
+					}
+				}
+			}
+
+	}
 	return 0;
 }
-
 
 // GIVEN
 // Member functions to get values.
@@ -140,11 +202,13 @@ void History::read_history() {
 		unsigned int day {ece150::get_trans_day()};
 		unsigned int month {ece150::get_trans_month()};
 		unsigned int year {ece150::get_trans_year()};
-		unsigned int shares {ece150::get_trans_shares()};
 		bool type {ece150::get_trans_type()};
+		unsigned int shares {ece150::get_trans_shares()};
 		double amount {ece150::get_trans_amount()};
 
-		std::cout << symbol << " " << day << " " << month << " " << year << " " << type << " " << shares << " " << amount << std::endl;
+		Transaction * current_trans = new Transaction(symbol,day,month,year,type,shares,amount);
+		insert(current_trans);
+		//std::cout << symbol << " " << day << " " << month << " " << year << " " << type << " " << shares << " " << amount << std::endl;
 	}
 
 	ece150::close_file();
@@ -189,6 +253,37 @@ void History::sort_by_date() {
 //
 
 void History::update_acb_cgl() {
+	Transaction * p_traverse = this->get_p_head();
+	double ABC {0};
+	unsigned int SHARES {0};
+	double ABCSHARE {0};
+	double OLG {0};
+
+	while (p_traverse != nullptr) {
+		if (p_traverse->get_trans_type()) { //IF TRANSACTION IS BUY THEN
+			ABC += p_traverse->get_amount(); //ACB IS += $$$					SET TO += IF BUY OR -= IF SELL
+			SHARES += p_traverse->get_shares();
+			ABCSHARE = ABC/SHARES;
+
+			OLG = 0;
+		}
+		if (p_traverse->get_trans_type() != 1) { //IF TRANSACTION IS SELL THEN
+			OLG = (p_traverse->get_amount() - (p_traverse->get_shares())*ABCSHARE);
+
+			ABC -= (p_traverse->get_shares())*ABCSHARE;
+			SHARES -= p_traverse->get_shares();
+			ABCSHARE = ABC/SHARES;
+
+		}
+
+		p_traverse->set_acb(ABC);
+		p_traverse->set_share_balance(SHARES);
+		p_traverse->set_acb_per_share(ABCSHARE);
+		p_traverse->set_cgl(OLG);
+
+		p_traverse = p_traverse->get_next();
+	}
+
 	return;
 }
 
@@ -208,6 +303,38 @@ double History::compute_cgl(unsigned int year) {
 //
 
 void History::print() {
+
+
+	Transaction * p_traverse = this->get_p_head();
+
+	std::cout << "======== BEGIN TRANSACTION HISTORY ============ " << std::endl;
+
+	while (p_traverse != nullptr) {
+
+		 std::cout << std::fixed << std::setprecision(2);
+		  std::cout << std::setw(4) << p_traverse->get_trans_id() << " "
+		    << std::setw(4) << p_traverse->get_symbol() << " "
+		    << std::setw(4) << p_traverse->get_day() << " "
+		    << std::setw(4) << p_traverse->get_month() << " "
+		    << std::setw(4) << p_traverse->get_year() << " ";
+
+
+		  if ( p_traverse->get_trans_type() ) {
+		    std::cout << "  Buy  ";
+		  } else { std::cout << "  Sell "; }
+
+		  std::cout << std::setw(4) << p_traverse->get_shares() << " "
+		    << std::setw(10) << p_traverse->get_amount() << " "
+		    << std::setw(10) << p_traverse->get_acb() << " " << std::setw(4) << p_traverse->get_share_balance() << " "
+		    << std::setw(10) << std::setprecision(3) << p_traverse->get_acb_per_share() << " "
+		    << std::setw(10) << std::setprecision(3) << p_traverse->get_cgl()
+		    << std::endl;
+
+
+		p_traverse = p_traverse->get_next();
+	}
+
+	std::cout << "========== END TRANSACTION HISTORY ============" << std::endl;
 	return;
 }
 
