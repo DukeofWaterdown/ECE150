@@ -6,3 +6,6 @@ In addition to that, I will likely store little one-offs in this repository as w
 
 Enjoy! :)
 -The Duke of Waterloo
+
+
+Project 4 - Stonks and stuff - Reading information from a .txt file, sorting it chronologically, and computing some calculations!
