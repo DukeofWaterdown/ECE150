@@ -72,48 +72,49 @@ bool Transaction::operator<(Transaction const &other) {
 	unsigned int t2_day = other.get_day();
 	unsigned int t2_id = other.get_trans_id();
 
+//	std::cout << "BRUNOO";
 
 	if (t1_year < t2_year) { //General Year Stuff
-		std::cout << "t1 year is smaller" << std::endl;
+//		std::cout << "t1 year is smaller" << std::endl;
 		return 1;
 
 	}
 	if (t1_year > t2_year) {
-		std::cout << "t1 year is bigger" << std::endl;
+//		std::cout << "t1 year is bigger" << std::endl;
 		return 0;
 	}
 
 	if (t1_year == t2_year) { //Same Year
-		std::cout << "t1 and t2 are same year" << std::endl;
+//		std::cout << "t1 and t2 are same year" << std::endl;
 			if (t1_month < t2_month) {
-				std::cout << "t1 month is smaller" << std::endl;
+//				std::cout << "t1 month is smaller" << std::endl;
 				return 1;
 
 			}
 			else if (t1_month > t2_month) {
-				std::cout << "t1 month is bigger" << std::endl;
+//				std::cout << "t1 month is bigger" << std::endl;
 				return 0;
 			}
 			else if (t1_month == t2_month) { //Same Month
-				std::cout << "t1 and t2 are same month" << std::endl;
+//				std::cout << "t1 and t2 are same month" << std::endl;
 				if(t1_day < t2_day) {
-					std::cout << "t1 day is smaller" << std::endl;
+//					std::cout << "t1 day is smaller" << std::endl;
 					return 1;
 
 				}
 				else if (t1_day < t2_day) {
-					std::cout << "t1 day is bigger" << std::endl;
+//					std::cout << "t1 day is bigger" << std::endl;
 					return 0;
 				}
 				else if (t1_day == t2_day) { //Same Day
-					std::cout << "t1 and t2 is same day" << std::endl;
+//					std::cout << "t1 and t2 is same day" << std::endl;
 					if (t1_id < t2_id) {
-						std::cout << "t1 id is smaller" << std::endl;
-						return 1;
+//						std::cout << "t1 id is smaller" << std::endl;
+						return 0;
 					}
 					else if (t1_id > t2_id) {
-						std::cout << "t1 id is bigger" << std::endl;
-						return 0;
+//						std::cout << "t1 id is bigger" << std::endl;
+						return 1;
 					}
 				}
 			}
@@ -261,7 +262,7 @@ void History::insert (Transaction * p_new_trans) { //ALI IN BR 6 - BASICALLY APP
 // TASK 6
 //
 void History::sort_by_date() {
-	Transaction * p_traverse = this->get_p_head();
+	/*Transaction * p_traverse = this->get_p_head();
 	Transaction * p_bruno = nullptr;
 
 	if(!p_traverse->operator<(*(p_traverse->get_next()))) {
@@ -279,6 +280,67 @@ void History::sort_by_date() {
 	}
 
 	return;
+*/
+
+	//Thanks Andy! Have a wonderful weekend :)
+
+	  if ((this->p_head == nullptr) || (this->p_head->get_next() == nullptr)) {
+
+	    return;
+	  }
+	  else {
+
+	    //create new list to store sorted elements
+	      Transaction *p_head_sorted {nullptr};
+
+	      //go through the original list and move each node one by one
+	      while (this->p_head != nullptr) {
+
+	        //remove node from original list
+	        Transaction *p_trans_move{p_head};
+	        this->p_head = this->p_head->get_next();
+	        p_trans_move->set_next(nullptr);
+
+	        //insert at the top of the list
+	        if (p_head_sorted == nullptr) {
+	          p_head_sorted = p_trans_move;
+	        }
+
+	        else if (*p_trans_move < *p_head_sorted) {
+	          p_trans_move->set_next(p_head_sorted);
+	          p_head_sorted = p_trans_move;
+	        }
+	        //insert somewhere in the middle or end of list
+	        else {
+	          Transaction *p_prev {nullptr};
+	          Transaction *p_traverse {p_head_sorted};
+
+	          while (p_traverse != nullptr) {
+	            if (!(*p_traverse < *p_trans_move)) {
+	              p_prev->set_next(p_trans_move);
+	              p_trans_move->set_next(p_traverse);
+	              break;
+	            }
+	            p_prev = p_traverse;
+	            p_traverse = p_traverse->get_next();
+//	            p_traverse->set_next(p_trans_move);
+	          }
+
+
+	          //insert at end of list
+	          if (p_traverse == nullptr) {
+	        	  p_prev->set_next(p_trans_move);
+
+	          }
+	        }
+
+	      }
+	      p_head = p_head_sorted;
+
+	}
+
+	        //Original: {6->{} } || p_head
+	        //Sorted: {1->2->3->5->6}
 }
 
 
