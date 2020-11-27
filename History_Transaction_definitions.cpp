@@ -39,6 +39,7 @@ Transaction::Transaction(std::string ticker_symbol, unsigned int day_date, unsig
 	shares = number_shares;
 	amount = trans_amount;
 	trans_id = assigned_trans_id;
+	assigned_trans_id++;
 
 	acb = 0;
 	acb_per_share = 0;
@@ -73,31 +74,45 @@ bool Transaction::operator<(Transaction const &other) {
 
 
 	if (t1_year < t2_year) { //General Year Stuff
+		std::cout << "t1 year is smaller" << std::endl;
 		return 1;
+
 	}
 	if (t1_year > t2_year) {
+		std::cout << "t1 year is bigger" << std::endl;
 		return 0;
 	}
 
 	if (t1_year == t2_year) { //Same Year
+		std::cout << "t1 and t2 are same year" << std::endl;
 			if (t1_month < t2_month) {
+				std::cout << "t1 month is smaller" << std::endl;
 				return 1;
+
 			}
 			else if (t1_month > t2_month) {
+				std::cout << "t1 month is bigger" << std::endl;
 				return 0;
 			}
 			else if (t1_month == t2_month) { //Same Month
+				std::cout << "t1 and t2 are same month" << std::endl;
 				if(t1_day < t2_day) {
+					std::cout << "t1 day is smaller" << std::endl;
 					return 1;
+
 				}
 				else if (t1_day < t2_day) {
+					std::cout << "t1 day is bigger" << std::endl;
 					return 0;
 				}
 				else if (t1_day == t2_day) { //Same Day
+					std::cout << "t1 and t2 is same day" << std::endl;
 					if (t1_id < t2_id) {
+						std::cout << "t1 id is smaller" << std::endl;
 						return 1;
 					}
 					else if (t1_id > t2_id) {
+						std::cout << "t1 id is bigger" << std::endl;
 						return 0;
 					}
 				}
@@ -225,6 +240,8 @@ void History::insert (Transaction * p_new_trans) { //ALI IN BR 6 - BASICALLY APP
 	if (p_head == nullptr) {
 		//empty case (set p_head to this new guy)
 		p_head = p_new_trans;
+
+		return;
 	}
 
 	else {
@@ -244,6 +261,23 @@ void History::insert (Transaction * p_new_trans) { //ALI IN BR 6 - BASICALLY APP
 // TASK 6
 //
 void History::sort_by_date() {
+	Transaction * p_traverse = this->get_p_head();
+	Transaction * p_bruno = nullptr;
+
+	if(!p_traverse->operator<(*(p_traverse->get_next()))) {
+		std::cout << "BIG BOI";
+
+		p_bruno = p_traverse; //store the p_traverse transaction to p_bruno
+
+		p_traverse = p_bruno->get_next(); //set the p_transverse to the next entry (removing o.g. p_traverse)
+
+		p_bruno->set_next(nullptr);
+
+		insert(p_bruno);
+
+		std::cout << " BRUNOOO";
+	}
+
 	return;
 }
 
