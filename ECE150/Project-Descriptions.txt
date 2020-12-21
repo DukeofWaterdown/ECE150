@@ -1,0 +1,3 @@
+ECE150 - Electrical and Computer Engineering One Hundred and Fifty - AKA. Coding for First Year Electrical Engineers
+
+Project 4 - Stonks and stuff - Reading information from a .txt file, sorting it chronologically, and computing some calculations!
